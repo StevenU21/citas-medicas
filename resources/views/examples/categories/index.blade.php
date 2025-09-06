@@ -27,7 +27,7 @@
                         @foreach ($categories as $category)
                             <tr>
                                 <x-table.td>
-                                    <x-welcome.badge color="primary" :text="$category->id" />
+                                    <x-welcome.badge color="primary">{{ $category->id }}</x-welcome.badge>
                                 </x-table.td>
                                 <x-table.td>
                                     {{ $category->name }}
@@ -44,14 +44,14 @@
                                 </x-table.td>
 
                                 <x-table.td styleType="action">
-                                    <x-link href="{{ route('categories.show', $category) }}" variant="primary" icon="fas fa-eye"
-                                        text="Mostrar" size="sm" can="read categories" />
+                                    <x-link href="{{ route('categories.show', $category) }}" variant="primary"
+                                        icon="fas fa-eye" text="Mostrar" size="sm" can="read categories" />
 
-                                    <x-link href="{{ route('categories.edit', $category) }}" variant="info" icon="fas fa-edit"
-                                        text="Editar" size="sm" can="update categories" />
+                                    <x-link href="{{ route('categories.edit', $category) }}" variant="info"
+                                        icon="fas fa-edit" text="Editar" size="sm" can="update categories" />
 
-                                    <x-delete-button :route="route('categories.destroy', $category)" icon="fas fa-trash"
-                                        text="Eliminar" can="destroy categories" />
+                                    <x-delete-button :route="route('categories.destroy', $category)" icon="fas fa-trash" text="Eliminar"
+                                        can="destroy categories" />
                                 </x-table.td>
                             </tr>
                         @endforeach
