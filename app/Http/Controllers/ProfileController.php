@@ -7,10 +7,19 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    public function index(Request $request): View
+    {
+        return view('profile.index', [
+            'user' => $request->user(),
+        ]);
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -26,15 +35,25 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image) {
+                Storage::disk('public')->delete('profiles_images/' . $user->profile_image);
+            }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+            $file = $request->file('profile_image');
+            $imageName = Str::slug($user->name, '-') . '-' . $user->id . '.jpg';
+            $user->profile_image = $file->storeAs('profile_images', $imageName, 'public');
+        }
+
+        $user->save();
+        return Redirect::route('profile.edit')->with('updated', 'Perfil actualizado correctamente.');
     }
 
     /**
